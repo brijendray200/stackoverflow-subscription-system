@@ -1,0 +1,64 @@
+### Register User
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Login User
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Get Plans
+GET http://localhost:3000/api/subscription/plans
+
+### Create Razorpay Order (Replace TOKEN)
+POST http://localhost:3000/api/subscription/create-razorpay-order
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "plan": "bronze"
+}
+
+### Confirm Payment (Replace TOKEN and TRANSACTION_ID)
+POST http://localhost:3000/api/subscription/confirm-payment
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "plan": "bronze",
+  "transactionId": "pay_test123",
+  "gateway": "razorpay"
+}
+
+### Post Question (Replace TOKEN)
+POST http://localhost:3000/api/questions
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "title": "How to use async/await in JavaScript?",
+  "content": "I'm trying to understand async/await syntax in JavaScript. Can someone explain with examples?",
+  "tags": ["javascript", "async", "promises"]
+}
+
+### Get User Questions (Replace TOKEN)
+GET http://localhost:3000/api/questions
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Admin Stats (Replace TOKEN)
+GET http://localhost:3000/api/admin/stats
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get All Payments (Replace TOKEN)
+GET http://localhost:3000/api/admin/payments
+Authorization: Bearer YOUR_TOKEN_HERE
