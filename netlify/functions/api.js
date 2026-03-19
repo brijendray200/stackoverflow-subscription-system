@@ -17,18 +17,45 @@ app.use(express.json());
 let isConnected = false;
 
 const connectDB = async () => {
-  if (isConnected) return;
-  await mongoose.connect(process.env.MONGODB_URI);
-  isConnected = true;
+  if (isConnected && mongoose.connection.readyState === 1) return;
+  
+  if (!process.env.MONGODB_URI) {
+    throw new Error('MONGODB_URI environment variable is not set');
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+    });
+    isConnected = true;
+    console.log('MongoDB connected');
+  } catch (err) {
+    isConnected = false;
+    throw err;
+  }
 };
 
 app.use(async (req, res, next) => {
-  await connectDB();
-  next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection error:', err.message);
+    return res.status(503).json({ 
+      error: 'Database connection failed', 
+      message: 'Please check MONGODB_URI environment variable in Netlify settings',
+      details: err.message
+    });
+  }
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    dbStatus: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
 });
 
 app.use('/api/auth', authRoutes);

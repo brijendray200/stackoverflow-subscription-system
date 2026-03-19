@@ -193,24 +193,14 @@ async function initiatePayment(plan, gateway) {
         return;
       }
 
-      // Initialize Stripe
-      const stripe = Stripe(data.publishableKey || 'pk_test_51234567890');
-      
-      // Create payment form
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId
-      });
+      // Stripe demo payment flow
+      const paymentSuccess = confirm(
+        `💳 Stripe Payment\n\nPlan: ${data.plan}\nAmount: ₹${data.amount}\n\nClick OK to confirm payment`
+      );
 
-      if (error) {
-        // For demo, we'll use a simpler approach
-        const paymentSuccess = confirm(
-          `Stripe Payment\n\nPlan: ${data.plan}\nAmount: ₹${data.amount}\n\nClick OK to simulate successful payment`
-        );
-
-        if (paymentSuccess) {
-          const transactionId = 'stripe_' + Date.now();
-          await confirmPayment(plan, transactionId, 'stripe');
-        }
+      if (paymentSuccess) {
+        const transactionId = 'stripe_' + Date.now();
+        await confirmPayment(plan, transactionId, 'stripe');
       }
     }
   } catch (error) {
