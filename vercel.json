@@ -16,16 +16,15 @@
       "dest": "server.js"
     },
     {
-      "src": "/admin",
-      "dest": "/public/admin.html"
-    },
-    {
-      "src": "/(.*\\.(js|css|html|ico|png|jpg|svg))",
+      "src": "/(.*\\.(js|css|ico|png|jpg|svg))",
       "dest": "/public/$1"
     },
     {
       "src": "/(.*)",
       "dest": "/public/index.html"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
