@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema({
   planExpiry: { type: Date },
   questionsToday: { type: Number, default: 0 },
   lastQuestionDate: { type: Date },
+  resetPasswordToken: { type: String },
+  resetPasswordExpiry: { type: Date },
   createdAt: { type: Date, default: Date.now }
 });
 

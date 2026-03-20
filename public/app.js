@@ -10,19 +10,29 @@ function showMessage(elementId, message, isError = false) {
 function showTab(tab) {
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
+  const forgotForm = document.getElementById('forgotPasswordForm');
+  const resetForm = document.getElementById('resetPasswordForm');
   const tabs = document.querySelectorAll('.tab-btn');
-  
+
+  [loginForm, registerForm, forgotForm, resetForm].forEach(f => f.classList.add('hidden'));
   tabs.forEach(t => t.classList.remove('active'));
-  
+
   if (tab === 'login') {
     loginForm.classList.remove('hidden');
-    registerForm.classList.add('hidden');
     tabs[0].classList.add('active');
   } else {
-    loginForm.classList.add('hidden');
     registerForm.classList.remove('hidden');
     tabs[1].classList.add('active');
   }
+}
+
+function showForgotPassword() {
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const forgotForm = document.getElementById('forgotPasswordForm');
+  const resetForm = document.getElementById('resetPasswordForm');
+  [loginForm, registerForm, resetForm].forEach(f => f.classList.add('hidden'));
+  forgotForm.classList.remove('hidden');
 }
 
 async function register() {
@@ -299,6 +309,61 @@ function displayQuestions(questions) {
       <div class="meta">Posted: ${new Date(q.createdAt).toLocaleString('en-IN')}</div>
     </div>
   `).join('');
+}
+
+async function forgotPassword() {
+  const email = document.getElementById('forgotEmail').value;
+  if (!email) return showMessage('forgotMessage', 'Email daalo', true);
+
+  try {
+    const res = await fetch(`${API_URL}/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    showMessage('forgotMessage', data.message || data.error, !res.ok);
+  } catch (error) {
+    showMessage('forgotMessage', 'Error: ' + error.message, true);
+  }
+}
+
+async function resetPassword() {
+  const password = document.getElementById('newPassword').value;
+  const confirm = document.getElementById('confirmPassword').value;
+
+  if (password !== confirm) return showMessage('resetMessage', 'Passwords match nahi kar rahe', true);
+  if (password.length < 6) return showMessage('resetMessage', 'Password kam se kam 6 characters ka hona chahiye', true);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+
+  try {
+    const res = await fetch(`${API_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password })
+    });
+    const data = await res.json();
+    showMessage('resetMessage', data.message || data.error, !res.ok);
+    if (res.ok) {
+      setTimeout(() => {
+        window.history.replaceState({}, document.title, '/');
+        showTab('login');
+      }, 2000);
+    }
+  } catch (error) {
+    showMessage('resetMessage', 'Error: ' + error.message, true);
+  }
+}
+
+// Check for reset token in URL on page load
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('token')) {
+  document.getElementById('loginForm').classList.add('hidden');
+  document.getElementById('registerForm').classList.add('hidden');
+  document.getElementById('forgotPasswordForm').classList.add('hidden');
+  document.getElementById('resetPasswordForm').classList.remove('hidden');
 }
 
 if (token) {
