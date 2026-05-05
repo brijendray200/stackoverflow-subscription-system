@@ -1,10 +1,10 @@
 let token = localStorage.getItem('token');
 const API_URL = window.location.origin + '/api';
 
-function showMessage(elementId, message, isError = false) {
-  const el = document.getElementById(elementId);
-  el.innerHTML = `<p class="${isError ? 'error' : 'success'}">${message}</p>`;
-  setTimeout(() => el.innerHTML = '', 5000);
+// function showMessage(elementId, message, isError = false) {
+//   const el = document.getElementById(elementId);
+//   el.innerHTML = `<p class="${isError ? 'error' : 'success'}">${message}</p>`;
+//   setTimeout(() => el.innerHTML = '', 5000);
 }
 
 function showTab(tab) {
